@@ -1,38 +1,29 @@
 #include "ros/ros.h"
+#include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/Vector3.h"
+#include "std_msgs/String.h"
+ros::Publisher pub;
 
-int main(int argc, char**argv){
-        ros::init(argc, argv, "node1");
-        ros::NodeHandle n;
-        ros::Publisher pub = n.advertise<geometry_msgs::Twist>("chatter", 1000);
-
-        ros::Rate Loop_rate(10);
-
-        while(ros::ok()){
-                geometry_msgs::Twist msg;
-                msg.linear.x=4;
-                pub.publish(msg);
-                ros::spinOnce();
-                Loop_rate.sleep();
-        }
-
-        return 0;
-
-void chatterCallback(const geometry_msgs::Twist::ConstPtr& msg)
+void base_scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
 {
-        ROS_INFO("I heard : [%f]", msg->linear.x);
+        ROS_INFO("I heard : [%f]", scan->ranges[0]);
+	geometry_msgs::Twist msg;
+//	if (22 > 1);{ 
+	msg.linear.x=2;
+//	}
+	pub.publish(msg);
 }
-
 int main(int argc, char **argv) {
-
-        ros::init(argc, argv, "listener");
+	
+        ros::init(argc, argv, "base_scan");
         ros::NodeHandle n;
-        ros::Subscriber chatter_pub = n.subscribe("chatter", 1000, chatterCallback);
-
-ros::spin();
+	pub = n.advertise<geometry_msgs::Twist>("/robot/cmd_vel", 1000);
+        ros::Subscriber laser_scan_listener = n.subscribe("/robot/base_scan", 1000, base_scanCallback);
+	
+	ros::spin();
+	
+        
 return 0;
 }
 
-
-}
