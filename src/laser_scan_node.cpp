@@ -7,11 +7,23 @@ ros::Publisher pub;
 
 void base_scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
 {
-        ROS_INFO("I heard : [%f]", scan->ranges[0]);
+        ROS_INFO("I heard : [%d]", scan->ranges.size());
+	
 	geometry_msgs::Twist msg;
-//	if (22 > 1);{ 
+	if (scan->ranges[60] > 3){ 
+	msg.linear.x=4;
+	}
+	else {
+	msg.angular.z=4;
 	msg.linear.x=2;
-//	}
+	}
+	if (scan->ranges[120] > 3){
+	msg.linear.x=4;
+	}
+	else {
+	msg.angular.z=-4;
+	msg.linear.x=2;
+	}
 	pub.publish(msg);
 }
 int main(int argc, char **argv) {
